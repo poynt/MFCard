@@ -66,7 +66,7 @@ extension MFCardDelegate{
     fileprivate var cardTextFields:[UITextField]!
     weak fileprivate var rootViewController: UIViewController!
     fileprivate var blurEffectView:UIVisualEffectView!
-
+    
     fileprivate var nibName: String = "MFCardView"
     public var autoDismiss = false
     public var flipOnDone = false
@@ -88,7 +88,7 @@ extension MFCardDelegate{
         setup()
         setupUI()
     }
-
+    
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
@@ -101,16 +101,16 @@ extension MFCardDelegate{
         // 1. load a nib
         view = loadViewFromNib()
         // 2. add as subview
-
+        
         self.addSubview(self.view)
-                // 3. allow for autolayout
+        // 3. allow for autolayout
         self.view.translatesAutoresizingMaskIntoConstraints = false
         // 4. add constraints to span entire view
         self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: ["view": self.view]))
         self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|", options: [], metrics: nil, views: ["view": self.view]))
         //Orientation Observer
         NotificationCenter.default.addObserver(self, selector: #selector(self.orientationDidChange), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
-
+        
         self.layoutIfNeeded()
         self.updateConstraintsIfNeeded()
         generalSetup()
@@ -120,7 +120,7 @@ extension MFCardDelegate{
     fileprivate func generalSetup(){
         //Other SetUps...
         cardTextFields = [txtCardNoP4,txtCardNoP3,txtCardNoP2,txtCardNoP1,txtCardName,txtCvc];
-       btnDone.setTitle("Close", for: .normal)
+        btnDone.setTitle("Close", for: .normal)
         let components = (Calendar.current as NSCalendar).components([.day, .month, .year], from: Date())
         let year = components.year
         let expiryMonth = Month.allValues
@@ -177,6 +177,7 @@ extension MFCardDelegate{
         
     }
     
+    
     public func showCard(){
         let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
         blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -190,7 +191,7 @@ extension MFCardDelegate{
         rootViewController.view.addConstraint(NSLayoutConstraint(item: view, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: rootViewController.view, attribute: NSLayoutAttribute.centerX, multiplier: 1.0, constant: 0.0));
         
         // align view from the top
-         topConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(topDistance)-[view]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["view": view])
+        topConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(topDistance)-[view]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["view": view])
         rootViewController.view.addConstraints(topConstraints!);
         
         // width constraint
@@ -251,7 +252,7 @@ extension MFCardDelegate{
         viewExpiryMonth.text = (card.month?.rawValue)!
         viewExpiryYear.text = card.year!
         txtCvc.text = card.cvc
-
+        
     }
     
     public func dismissCard() {
@@ -265,7 +266,7 @@ extension MFCardDelegate{
                 self.view.removeFromSuperview()
                 if self.blurEffectView != nil{
                     self.blurEffectView.removeFromSuperview()
-
+                    
                 }
             })
         })
@@ -295,7 +296,7 @@ extension MFCardDelegate{
             mfBundel = Bundle(url: bundleURL!)!
         }
         return mfBundel!
-
+        
     }
     
     fileprivate func screenSize() -> CGSize {
@@ -398,7 +399,7 @@ extension MFCardDelegate{
             }
         }
     }
-
+    
     
     //MARK:
     //MARK: IBAction
@@ -504,71 +505,76 @@ extension MFCardDelegate{
     
     fileprivate func setImage(_ card : String) {
         
-                func setImageWithAnnimation(_ image:UIImage?,cardType:CardType){
-                    addedCardType = cardType
-                    if image != cardTypeImage.image {
-                        UIView.transition(with: self.cardTypeImage, duration: 0.3, options: cardTypeAnimation, animations: {
-                            self.cardTypeImage.image = image
-                        }, completion: nil)
-                    }
-                }
+        func setImageWithAnnimation(_ image:UIImage?,cardType:CardType){
+            addedCardType = cardType
+            if image != cardTypeImage.image {
+                UIView.transition(with: self.cardTypeImage, duration: 0.3, options: cardTypeAnimation, animations: {
+                    self.cardTypeImage.image = image
+                }, completion: nil)
+            }
+        }
         
-                switch card {
-        
-                case CardType.Visa.rawValue:
-                    setImageWithAnnimation(UIImage(named: "Visa", in: mfBundel!,compatibleWith: nil),cardType: CardType.Visa)
-                    break
-        
-                case CardType.MasterCard.rawValue:
-                    setImageWithAnnimation(UIImage(named: "MasterCard", in: mfBundel!,compatibleWith: nil),cardType: CardType.MasterCard)
-                    break
-        
-                case CardType.Amex.rawValue:
-                    setImageWithAnnimation(UIImage(named: "Amex", in: mfBundel!,compatibleWith: nil),cardType: CardType.MasterCard)
-                    break
-                
-                case CardType.JCB.rawValue:
-                    setImageWithAnnimation(UIImage(named: "JCB", in: mfBundel!,compatibleWith: nil),cardType: CardType.JCB)
-                    break
-        
-                case CardType.Discover.rawValue:
-                    setImageWithAnnimation(UIImage(named: "Discover", in: mfBundel!,compatibleWith: nil),cardType: CardType.Discover)
-                    break
-        
-                case CardType.Diners.rawValue:
-                    setImageWithAnnimation(UIImage(named: "DinersClub", in: mfBundel!,compatibleWith: nil),cardType: CardType.Diners)
-        
-                case CardType.Maestro.rawValue:
-                    setImageWithAnnimation(UIImage(named: "Maestro", in: mfBundel!,compatibleWith: nil),cardType: CardType.Maestro)
-                    
-                case CardType.Electron.rawValue:
-                    setImageWithAnnimation(UIImage(named: "Electron", in: mfBundel!,compatibleWith: nil),cardType: CardType.Electron)
-                
-                case CardType.Dankort.rawValue:
-                    setImageWithAnnimation(UIImage(named: "Dankort", in: mfBundel!,compatibleWith: nil),cardType: CardType.Dankort)
-                    
-                case CardType.UnionPay.rawValue:
-                    setImageWithAnnimation(UIImage(named: "UnionPay", in: mfBundel!,compatibleWith: nil),cardType: CardType.UnionPay)
-                    
-                case CardType.RuPay.rawValue:
-                    setImageWithAnnimation(UIImage(named: "RuPay", in: mfBundel!,compatibleWith: nil), cardType: CardType.RuPay)
-                    
-                case CardType.Unknown.rawValue:
-                    cardTypeImage.image = nil
-                    addedCardType = CardType.Unknown
-                default:
-                    cardTypeImage.image = nil
-                    addedCardType = CardType.Visa
-        
-                    break
-                }
+        switch card {
+            
+        case CardType.Visa.rawValue:
+            setImageWithAnnimation(UIImage(named: "Visa", in: mfBundel!,compatibleWith: nil),cardType: CardType.Visa)
+            break
+            
+        case CardType.MasterCard.rawValue:
+            setImageWithAnnimation(UIImage(named: "MasterCard", in: mfBundel!,compatibleWith: nil),cardType: CardType.MasterCard)
+            break
+            
+        case CardType.Amex.rawValue:
+            setImageWithAnnimation(UIImage(named: "Amex", in: mfBundel!,compatibleWith: nil),cardType: CardType.MasterCard)
+            break
+            
+        case CardType.JCB.rawValue:
+            setImageWithAnnimation(UIImage(named: "JCB", in: mfBundel!,compatibleWith: nil),cardType: CardType.JCB)
+            break
+            
+        case CardType.Discover.rawValue:
+            setImageWithAnnimation(UIImage(named: "Discover", in: mfBundel!,compatibleWith: nil),cardType: CardType.Discover)
+            break
+            
+        case CardType.Diners.rawValue:
+            setImageWithAnnimation(UIImage(named: "DinersClub", in: mfBundel!,compatibleWith: nil),cardType: CardType.Diners)
+            
+        case CardType.Maestro.rawValue:
+            setImageWithAnnimation(UIImage(named: "Maestro", in: mfBundel!,compatibleWith: nil),cardType: CardType.Maestro)
+            
+        case CardType.Electron.rawValue:
+            setImageWithAnnimation(UIImage(named: "Electron", in: mfBundel!,compatibleWith: nil),cardType: CardType.Electron)
+            
+        case CardType.Dankort.rawValue:
+            setImageWithAnnimation(UIImage(named: "Dankort", in: mfBundel!,compatibleWith: nil),cardType: CardType.Dankort)
+            
+        case CardType.UnionPay.rawValue:
+            setImageWithAnnimation(UIImage(named: "UnionPay", in: mfBundel!,compatibleWith: nil),cardType: CardType.UnionPay)
+            
+        case CardType.RuPay.rawValue:
+            setImageWithAnnimation(UIImage(named: "RuPay", in: mfBundel!,compatibleWith: nil), cardType: CardType.RuPay)
+            
+        case CardType.Unknown.rawValue:
+            cardTypeImage.image = nil
+            addedCardType = CardType.Unknown
+        default:
+            cardTypeImage.image = nil
+            addedCardType = CardType.Visa
+            
+            break
+        }
     }
     
+    public func setHideButton(btn:UIButton){
+        self.btnDone.isHidden = true
+        btn.addTarget(self, action: #selector(MFCardView.btnDoneAction(_:)), for: .touchUpInside)
+        self.btnDone = btn
+    }
     //MARK:
     //MARK: @IBInspectable
     @IBInspectable public var cardImage :UIImage?  {
         didSet{
-                frontCardImage.image = cardImage
+            frontCardImage.image = cardImage
         }
         
     }
@@ -794,7 +800,7 @@ extension MFCardView: UITextFieldDelegate{
                 }
             }
             else {
-               // error = "Can not detect card."
+                // error = "Can not detect card."
                 print("Can not detect card.")
                 setImage("Unknown")
             }
